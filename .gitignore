@@ -1,0 +1,19 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IntelliJ IDEA ###
+/target/
+/.idea/*
+/.idea/**/*
+/.idea/.gitignore
+*.iws
+*.iml
+*.ipr
+
+APDescription.txt
+MTPs-Main-Container.txt
+
+### Mac OS ###
+.DS_Store
