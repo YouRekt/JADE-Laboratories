@@ -1,4 +1,4 @@
-package org.labs.laboratory1.exceptions;
+package org.labs.exceptions;
 
 import static java.lang.String.format;
 
