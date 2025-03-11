@@ -1,4 +1,4 @@
-package org.labs.laboratory2.behaviours;
+package org.labs.laboratory2.behaviours.pomodoro;
 
 import static jade.core.AID.ISLOCALNAME;
 import static jade.lang.acl.MessageTemplate.MatchSender;

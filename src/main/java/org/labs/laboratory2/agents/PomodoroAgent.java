@@ -2,7 +2,7 @@ package org.labs.laboratory2.agents;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.labs.laboratory2.behaviours.StudyingTimerBehaviour;
+import org.labs.laboratory2.behaviours.pomodoro.StudyingTimerBehaviour;
 
 import jade.core.Agent;
 import lombok.Getter;
