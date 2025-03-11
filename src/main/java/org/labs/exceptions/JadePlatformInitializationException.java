@@ -1,4 +1,4 @@
-package org.labs.laboratory1.exceptions;
+package org.labs.exceptions;
 
 public class JadePlatformInitializationException extends RuntimeException {
 
