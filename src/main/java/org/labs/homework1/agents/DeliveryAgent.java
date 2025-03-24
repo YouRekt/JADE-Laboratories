@@ -2,7 +2,6 @@ package org.labs.homework1.agents;
 
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.ServiceDescriptor;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -11,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.labs.exceptions.InvalidServiceSpecification;
 import org.labs.homework1.behaviours.FulfilOrderBehaviour;
-import org.labs.homework1.behaviours.SearchMarketsBehaviour;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +25,11 @@ public class DeliveryAgent extends Agent {
     @Setter
     private Double marketPrice;
     @Setter
-    private volatile boolean userConfirmed;
+    private boolean userNotified;
+    @Setter
+    private boolean priceReceived;
+    @Setter
+    private boolean orderReceived;
 
 
     @Override
@@ -37,13 +39,16 @@ public class DeliveryAgent extends Agent {
         deliveryFee = (Double) args[0];
         markets = new ArrayList<>();
         marketPrice = null;
-        userConfirmed = false;
+        userNotified = false;
+        priceReceived = false;
+        orderReceived = false;
 
         registerDeliveryService();
-        addBehaviour(new SearchMarketsBehaviour(this));
+//        addBehaviour(new SearchMarketsBehaviour(this));
         addBehaviour(new FulfilOrderBehaviour(this));
+//        addBehaviour(new TestPurchase(this));
 
-        System.out.printf("[%s] I'm ready to register my services! My delivery fee is %.2f %n", getLocalName(), deliveryFee);
+        System.out.printf("[%s] My delivery fee is %.2f %n", getLocalName(), deliveryFee);
     }
 
     private void registerDeliveryService() {

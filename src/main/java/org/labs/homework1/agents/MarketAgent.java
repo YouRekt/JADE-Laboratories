@@ -26,7 +26,7 @@ public class MarketAgent extends Agent {
         registerMarketService();
         addBehaviour(new SellProductsBehaviour(this));
 
-        System.out.printf("[%s] I'm ready to register my services! My products are %s %n", getLocalName(), products.toString());
+        System.out.printf("[%s] My products are %s %n", getLocalName(), products.toString());
     }
 
     private void registerMarketService() {

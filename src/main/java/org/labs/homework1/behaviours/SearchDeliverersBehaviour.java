@@ -17,7 +17,7 @@ public class SearchDeliverersBehaviour extends WakerBehaviour {
     private final ClientAgent clientAgent;
 
     public SearchDeliverersBehaviour(final ClientAgent a) {
-        super(a, 3000);
+        super(a, 1000);
         clientAgent = a;
     }
 

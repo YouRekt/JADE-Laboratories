@@ -53,7 +53,6 @@ public class SellProductsBehaviour extends ContractNetResponder {
         }
         Double price = products.stream().map(p -> marketAgent.getProducts().get(p)).reduce(0.0, Double::sum);
         System.out.printf("[%s] %s purchased: %s for %.2f %n", marketAgent.getLocalName(), accept.getSender(), products, price);
-        System.out.println(marketAgent.getLocalName() + " received ACCEPT_PROPOSAL from " + accept.getSender() + "for products " + products.toString());
         ACLMessage inform = accept.createReply();
         inform.setPerformative(INFORM);
         inform.setContent(String.valueOf(price));

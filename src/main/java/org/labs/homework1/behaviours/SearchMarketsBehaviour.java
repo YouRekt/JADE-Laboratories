@@ -18,7 +18,7 @@ public class SearchMarketsBehaviour extends WakerBehaviour {
     private final DeliveryAgent deliveryAgent;
 
     public SearchMarketsBehaviour(DeliveryAgent a) {
-        super(a, 5000);
+        super(a, 1000);
         deliveryAgent = a;
     }
 
@@ -43,6 +43,9 @@ public class SearchMarketsBehaviour extends WakerBehaviour {
             deliveryAgent.getMarkets().addAll(markets);
         } catch (FIPAException e) {
             throw new InvalidServiceSpecification(e);
+        }
+        finally {
+            myAgent.addBehaviour(new PurchaseProductsBehaviour(deliveryAgent));
         }
     }
 }

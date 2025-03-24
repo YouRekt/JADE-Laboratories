@@ -37,7 +37,7 @@ public class MakeOrderBehaviour extends ContractNetInitiator {
     @Override
     protected void handlePropose(ACLMessage propose, Vector acceptances) {
         try {
-            System.out.printf("[%s] Received proposal from %s with price %f %n", client.getLocalName(), propose.getSender(), mapper.readValue(propose.getContent(), Double.class));
+            System.out.printf("[%s] Received proposal from %s with price %.2f %n", client.getLocalName(), propose.getSender(), mapper.readValue(propose.getContent(), Double.class));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -50,7 +50,7 @@ public class MakeOrderBehaviour extends ContractNetInitiator {
 
     @Override
     protected void handleInform(ACLMessage inform) {
-        System.out.println("Received confirmation from " + inform.getSender() + ": " + inform.getContent());
+        System.out.printf("[%s] %s confirmed the order %n", client.getLocalName(), inform.getSender());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class MakeOrderBehaviour extends ContractNetInitiator {
             ACLMessage reply = response.createReply();
             if (response.equals(bestProposal)) {
                 reply.setPerformative(ACCEPT_PROPOSAL);
-                System.out.println("Accepting proposal from " + response.getSender());
+                System.out.printf("[%s] Accepting proposal from %s %n", client.getLocalName(), response.getSender());
             } else {
                 reply.setPerformative(REJECT_PROPOSAL);
             }
