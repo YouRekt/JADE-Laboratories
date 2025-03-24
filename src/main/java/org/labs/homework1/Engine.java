@@ -9,6 +9,8 @@ import jade.wrapper.StaleProxyException;
 import org.labs.exceptions.AgentContainerException;
 import org.labs.exceptions.JadePlatformInitializationException;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,7 +29,9 @@ public class Engine {
 
             runGUI(container);
 
-//            runAgent(container, "AgentName", "AgentClassName", new Object[]{"ARGS"});
+            runClients(container);
+            runDeliverers(container);
+            runMarkets(container);
 
         } catch (final InterruptedException | ExecutionException e) {
             throw new JadePlatformInitializationException(e);
@@ -45,11 +49,29 @@ public class Engine {
 
     private static void runAgent(final ContainerController mainContainer, final String agentName, final String className, final Object[] args) {
         try {
-            final String path = format("org.labs.laboratory2.agents.%s", className);
+            final String path = format("org.labs.homework1.agents.%s", className);
             final AgentController agent = mainContainer.createNewAgent(agentName, path, args);
             agent.start();
         } catch (final StaleProxyException e) {
             throw new AgentContainerException(agentName, e);
         }
+    }
+
+    private static void runClients(final ContainerController mainContainer) {
+        runAgent(mainContainer, "Client", "ClientAgent", new Object[]{List.of("milk", "coffee", "rice")});
+    }
+
+    private static void runDeliverers(final ContainerController mainContainer) {
+        runAgent(mainContainer, "Bolt Food", "DeliveryAgent", new Object[]{9.99});
+        runAgent(mainContainer, "Uber Eats", "DeliveryAgent", new Object[]{5.99});
+        runAgent(mainContainer, "Wolt", "DeliveryAgent", new Object[]{7.99});
+        runAgent(mainContainer, "Glovo", "DeliveryAgent", new Object[]{21.37});
+    }
+
+    private static void runMarkets(final ContainerController mainContainer) {
+        runAgent(mainContainer, "Biedronka", "MarketAgent", new Object[]{Map.of("milk", 5.00, "coffee", 25.00, "rice", 3.00)});
+        runAgent(mainContainer, "Lidl", "MarketAgent", new Object[]{Map.of("milk", 4.00, "coffee", 28.00, "rice", 3.00)});
+        runAgent(mainContainer, "Aldi", "MarketAgent", new Object[]{Map.of("milk", 6.00, "coffee", 22.50, "rice", 2.50)});
+        runAgent(mainContainer, "Auchan", "MarketAgent", new Object[]{Map.of("milk", 5.00, "coffee", 23.00, "rice", 6.90)});
     }
 }
