@@ -44,8 +44,5 @@ public class SearchMarketsBehaviour extends WakerBehaviour {
         } catch (FIPAException e) {
             throw new InvalidServiceSpecification(e);
         }
-        finally {
-            myAgent.addBehaviour(new PurchaseProductsBehaviour(deliveryAgent));
-        }
     }
 }

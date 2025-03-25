@@ -26,7 +26,7 @@ public class FulfilOrderBehaviour extends ContractNetResponder {
     public FulfilOrderBehaviour(DeliveryAgent a) {
         super(a, MessageTemplate.MatchPerformative(CFP));
         deliveryAgent = a;
-        registerHandleCfp(new HandleDeliveryCFPBehaviour(deliveryAgent,CFP_KEY,REPLY_KEY));
+        super.registerHandleCfp(new PurchaseProductsBehaviour(deliveryAgent,this));
     }
 
 //    @Override

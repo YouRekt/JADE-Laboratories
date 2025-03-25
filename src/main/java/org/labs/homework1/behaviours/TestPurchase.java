@@ -13,6 +13,6 @@ public class TestPurchase extends WakerBehaviour {
 
     @Override
     protected void onWake() {
-        myAgent.addBehaviour(new PurchaseProductsBehaviour(deliveryAgent));
+//        myAgent.addBehaviour(new PurchaseProductsBehaviour(deliveryAgent));
     }
 }

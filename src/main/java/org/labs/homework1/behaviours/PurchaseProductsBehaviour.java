@@ -4,37 +4,35 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import jade.lang.acl.ACLMessage;
-import jade.proto.ContractNetInitiator;
+import jade.proto.AchieveREInitiator;
 import org.labs.homework1.agents.DeliveryAgent;
 
 import java.util.*;
 
 import static jade.lang.acl.ACLMessage.*;
 
-public class PurchaseProductsBehaviour extends ContractNetInitiator {
+public class PurchaseProductsBehaviour extends AchieveREInitiator {
     private final DeliveryAgent deliveryAgent;
     static final ObjectMapper mapper = new JsonMapper();
 
-    public PurchaseProductsBehaviour(DeliveryAgent a) {
-        super(a, purchaseProducts(a));
+    public PurchaseProductsBehaviour(DeliveryAgent a, FulfilOrderBehaviour b) {
+        super(a, purchaseProducts(a, b));
         deliveryAgent = a;
     }
 
-    private static ACLMessage purchaseProducts(DeliveryAgent deliveryAgent) {
-        System.out.printf("[%s] Querying the markets for prices %n", deliveryAgent.getLocalName());
-        final ACLMessage msg = new ACLMessage(CFP);
-        msg.setContent("Show me your wares.");
-        deliveryAgent.getMarkets().forEach(msg::addReceiver);
-        return msg;
-    }
-
-    @Override
-    protected void handlePropose(ACLMessage propose, Vector acceptances) {
+    private static ACLMessage purchaseProducts(DeliveryAgent deliveryAgent, FulfilOrderBehaviour b) {
+        System.out.printf("[%s] Received the order. Querying the markets for prices %n", deliveryAgent.getLocalName());
+        final ACLMessage msgCFP = (ACLMessage) b.getDataStore().get(b.CFP_KEY);
         try {
-            System.out.printf("[%s] Received product prices from %s: %s %n", deliveryAgent.getLocalName(), propose.getSender(), mapper.readValue(propose.getContent(), Map.class).toString());
+            //noinspection unchecked
+            deliveryAgent.setOrder((List<String>) mapper.readValue(msgCFP.getContent(), List.class));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+        final ACLMessage msg = new ACLMessage(REQUEST);
+        msg.setContent("Show me your wares.");
+        deliveryAgent.getMarkets().forEach(msg::addReceiver);
+        return msg;
     }
 
     @Override
@@ -42,26 +40,19 @@ public class PurchaseProductsBehaviour extends ContractNetInitiator {
         System.out.printf("[%s] Received refusal from %s %n", deliveryAgent.getLocalName(), refuse.getSender());
     }
 
-    @Override
-    protected void handleInform(ACLMessage inform) {
-        System.out.printf("[%s] Received confirmation from %s: %s %n", deliveryAgent.getLocalName(), inform.getSender(), inform.getContent());
-    }
+//    @Override
+//    protected void handleInform(ACLMessage inform) {
+//        System.out.printf("[%s] Received confirmation from %s: %s %n", deliveryAgent.getLocalName(), inform.getSender(), inform.getContent());
+//    }
 
     @Override
-    protected void handleAllResponses(Vector responses, Vector acceptances) {
+    protected void handleAllResponses(Vector responses) {
         Random random = new Random();
         int choice = random.nextInt(responses.size());
         int i = 0;
         for (Object obj : responses) {
             ACLMessage response = (ACLMessage) obj;
-            ACLMessage reply = response.createReply();
             if (i == choice) {
-                reply.setPerformative(ACCEPT_PROPOSAL);
-                try {
-                    reply.setContent(mapper.writeValueAsString(deliveryAgent.getOrder()));
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
                 System.out.printf("[%s] Accepting proposal from %s %n", deliveryAgent.getLocalName(), response.getSender());
                 try {
                     //noinspection unchecked
@@ -72,12 +63,15 @@ public class PurchaseProductsBehaviour extends ContractNetInitiator {
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
-
-            } else {
-                reply.setPerformative(REJECT_PROPOSAL);
+                break;
             }
-            acceptances.add(reply);
             i++;
         }
+        Double finalCost = deliveryAgent.getMarketPrice() + deliveryAgent.getDeliveryFee();
+        final ACLMessage msgCFP = (ACLMessage) this.getDataStore().get(((FulfilOrderBehaviour) parent).CFP_KEY);
+        final ACLMessage clientResponse = msgCFP.createReply();
+        clientResponse.setContent(finalCost.toString());
+        clientResponse.setPerformative(PROPOSE);
+        this.getDataStore().put(((FulfilOrderBehaviour) parent).REPLY_KEY, clientResponse);
     }
 }
