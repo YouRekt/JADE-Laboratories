@@ -7,6 +7,8 @@ import org.labs.homework1.behaviours.delivery.clientHandling.ClientAcceptedBehav
 import org.labs.homework1.behaviours.delivery.clientHandling.ClientRejectedBehaviour;
 import org.labs.homework1.behaviours.delivery.clientHandling.SearchMarketsBehaviour;
 import org.labs.homework1.behaviours.delivery.clientHandling.SelectMarketsBehaviour;
+import org.labs.homework1.behaviours.delivery.marketHandling.DeliverToClientBehaviour;
+import org.labs.homework1.behaviours.delivery.marketHandling.DeliveryIssueBehaviour;
 import org.labs.homework1.behaviours.delivery.marketHandling.IncompleteOrderBehaviour;
 
 import static jade.lang.acl.ACLMessage.*;

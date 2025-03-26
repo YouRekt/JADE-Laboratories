@@ -1,4 +1,4 @@
-package org.labs.homework1.behaviours.delivery;
+package org.labs.homework1.behaviours.delivery.marketHandling;
 
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
