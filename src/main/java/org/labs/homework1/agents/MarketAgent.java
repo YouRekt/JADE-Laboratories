@@ -8,23 +8,24 @@ import jade.domain.FIPAException;
 import lombok.Getter;
 import lombok.Setter;
 import org.labs.exceptions.InvalidServiceSpecification;
-import org.labs.homework1.behaviours.SellProductsBehaviour;
+import org.labs.homework1.behaviours.market.MarketBehaviour;
 
 import java.util.Map;
 
+@Setter
 @Getter
 public class MarketAgent extends Agent {
-    @Setter
     private Map<String, Double> products;
 
     @Override
     protected void setup() {
         final Object[] args = getArguments();
 
+        //noinspection unchecked
         products = (Map<String, Double>) args[0];
 
         registerMarketService();
-        addBehaviour(new SellProductsBehaviour(this));
+        addBehaviour(new MarketBehaviour(this));
 
         System.out.printf("[%s] My products are %s %n", getLocalName(), products.toString());
     }

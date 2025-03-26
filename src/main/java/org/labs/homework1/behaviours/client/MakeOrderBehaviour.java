@@ -1,4 +1,4 @@
-package org.labs.homework1.behaviours;
+package org.labs.homework1.behaviours.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,8 +15,8 @@ import static jade.lang.acl.ACLMessage.*;
 
 public class MakeOrderBehaviour extends ContractNetInitiator {
 
-    private final ClientAgent client;
     static final ObjectMapper mapper = new JsonMapper();
+    private final ClientAgent client;
 
     public MakeOrderBehaviour(final ClientAgent a) {
         super(a, makeOrder(a));
@@ -37,20 +37,25 @@ public class MakeOrderBehaviour extends ContractNetInitiator {
     @Override
     protected void handlePropose(ACLMessage propose, Vector acceptances) {
         try {
-            System.out.printf("[%s] Received proposal from %s with price %.2f %n", client.getLocalName(), propose.getSender(), mapper.readValue(propose.getContent(), Double.class));
+            System.out.printf("[%s] Received proposal from %s with price %.2f %n", client.getLocalName(), propose.getSender().getLocalName(), mapper.readValue(propose.getContent(), Double.class));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
+    protected void handleFailure(ACLMessage failure) {
+        System.out.printf("[%s] Received failure from %s %n", client.getLocalName(), failure.getSender().getLocalName());
+    }
+
+    @Override
     protected void handleRefuse(ACLMessage refuse) {
-        System.out.printf("[%s] Received refusal from %s %n", client.getLocalName(), refuse.getSender());
+        System.out.printf("[%s] Received refusal from %s %n", client.getLocalName(), refuse.getSender().getLocalName());
     }
 
     @Override
     protected void handleInform(ACLMessage inform) {
-        System.out.printf("[%s] %s confirmed the order %n", client.getLocalName(), inform.getSender());
+        System.out.printf("[%s] %s delivered the order %n", client.getLocalName(), inform.getSender().getLocalName());
     }
 
     @Override
@@ -74,10 +79,11 @@ public class MakeOrderBehaviour extends ContractNetInitiator {
             ACLMessage reply = response.createReply();
             if (response.equals(bestProposal)) {
                 reply.setPerformative(ACCEPT_PROPOSAL);
-                System.out.printf("[%s] Accepting proposal from %s %n", client.getLocalName(), response.getSender());
+                System.out.printf("[%s] Accepting proposal from %s %n", client.getLocalName(), response.getSender().getLocalName());
             } else {
                 reply.setPerformative(REJECT_PROPOSAL);
             }
+            //noinspection unchecked
             acceptances.add(reply);
         }
     }

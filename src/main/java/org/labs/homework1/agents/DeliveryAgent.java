@@ -6,47 +6,38 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
 import lombok.Getter;
 import lombok.Setter;
 import org.labs.exceptions.InvalidServiceSpecification;
-import org.labs.homework1.behaviours.FulfilOrderBehaviour;
+import org.labs.homework1.behaviours.delivery.MessageHandlerBehaviour;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
+@Setter
 public class DeliveryAgent extends Agent {
-    @Setter
     private Double deliveryFee;
-    @Setter
-    private List<AID> markets;
-    @Setter
+    private List<AID> markets = new ArrayList<>();
     private List<String> order;
-    @Setter
-    private Double marketPrice;
-    @Setter
-    private boolean userNotified;
-    @Setter
-    private boolean priceReceived;
-    @Setter
-    private boolean orderReceived;
-
+    private Double marketPrice = Double.MIN_VALUE;
+    private Double deliveryPrice = Double.MIN_VALUE;
+    private Map<AID, ACLMessage> marketProposals = new HashMap<>();
+    private Map<AID, List<String>> selectedMarketProducts = new HashMap<>();
+    private ACLMessage clientCFP = null;
+    private ACLMessage clientResponse = null;
 
     @Override
     protected void setup() {
         final Object[] args = getArguments();
 
         deliveryFee = (Double) args[0];
-        markets = new ArrayList<>();
-        marketPrice = null;
-        userNotified = false;
-        priceReceived = false;
-        orderReceived = false;
 
         registerDeliveryService();
-//        addBehaviour(new SearchMarketsBehaviour(this));
-        addBehaviour(new FulfilOrderBehaviour(this));
-//        addBehaviour(new TestPurchase(this));
+        addBehaviour(new MessageHandlerBehaviour(this));
 
         System.out.printf("[%s] My delivery fee is %.2f %n", getLocalName(), deliveryFee);
     }

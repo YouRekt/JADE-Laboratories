@@ -1,4 +1,4 @@
-package org.labs.homework1.behaviours;
+package org.labs.homework1.behaviours.client;
 
 import jade.core.AID;
 import jade.core.behaviours.WakerBehaviour;
@@ -34,12 +34,9 @@ public class SearchDeliverersBehaviour extends WakerBehaviour {
             agentServices.addServices(serviceDescription);
             final DFAgentDescription[] availableServices = DFService.search(clientAgent, agentServices);
 
-            final List<AID> deliveryPlatforms = Arrays.stream(availableServices)
-                    .map(DFAgentDescription::getName)
-                    .toList();
+            final List<AID> deliveryPlatforms = Arrays.stream(availableServices).map(DFAgentDescription::getName).toList();
 
-            deliveryPlatforms.forEach(
-                    platform -> System.out.printf("[%s] Found delivery platform: %s %n", clientAgent.getLocalName(), platform));
+            deliveryPlatforms.forEach(platform -> System.out.printf("[%s] Found delivery platform: %s %n", clientAgent.getLocalName(), platform.getLocalName()));
             clientAgent.getDeliveryPlatforms().addAll(deliveryPlatforms);
         } catch (FIPAException e) {
             throw new InvalidServiceSpecification(e);

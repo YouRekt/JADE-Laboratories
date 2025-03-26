@@ -1,15 +1,14 @@
-package org.labs.homework1.behaviours;
+package org.labs.homework1.behaviours.delivery.clientHandling;
 
 import jade.core.AID;
-import jade.core.Agent;
 import jade.core.behaviours.WakerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.Property;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import org.labs.exceptions.InvalidServiceSpecification;
 import org.labs.homework1.agents.DeliveryAgent;
+import org.labs.homework1.behaviours.delivery.QueryMarketsBehaviour;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +23,7 @@ public class SearchMarketsBehaviour extends WakerBehaviour {
 
     @Override
     protected void onWake() {
-        System.out.printf("[%s] I'm searching for available markets... %n", deliveryAgent.getLocalName());
+        System.out.printf("[%s] Received the order. I'm searching for available markets... %n", deliveryAgent.getLocalName());
 
         final ServiceDescription serviceDescription = new ServiceDescription();
         serviceDescription.setType("Market");
@@ -34,15 +33,14 @@ public class SearchMarketsBehaviour extends WakerBehaviour {
             agentServices.addServices(serviceDescription);
             final DFAgentDescription[] availableServices = DFService.search(deliveryAgent, agentServices);
 
-            final List<AID> markets = Arrays.stream(availableServices)
-                    .map(DFAgentDescription::getName)
-                    .toList();
+            final List<AID> markets = Arrays.stream(availableServices).map(DFAgentDescription::getName).toList();
 
-            markets.forEach(
-                    platform -> System.out.printf("[%s] Found market: %s %n", deliveryAgent.getLocalName(), platform));
+            markets.forEach(platform -> System.out.printf("[%s] Found market: %s %n", deliveryAgent.getLocalName(), platform.getLocalName()));
             deliveryAgent.getMarkets().addAll(markets);
         } catch (FIPAException e) {
             throw new InvalidServiceSpecification(e);
+        } finally {
+            myAgent.addBehaviour(new QueryMarketsBehaviour(deliveryAgent));
         }
     }
 }
